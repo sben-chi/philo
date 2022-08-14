@@ -22,7 +22,7 @@ void	my_usleep(int t)
 		usleep(t * 1000);
 }
 
-void	my_print(int n_philo, char *str)
+void	my_print(t_data *data, int n_philo, char *str)
 {
 	pthread_mutex_lock(&(data->m));
 	printf("%d %d %s\n", my_get_time(), n_philo, str);
@@ -31,7 +31,7 @@ void	my_print(int n_philo, char *str)
 
 void	philo_act(void *dt)
 {
-	t_data	data;
+	t_data	*data;
 	int		n;
 
 	n = data->i;
@@ -40,14 +40,14 @@ void	philo_act(void *dt)
 	{
 		pthread_mutex_lock(&(data->forks[n]));
 		pthread_mutex_lock(&(data->forks[(n + 1) % data->philo_fork]));
-		my_print(n + 1, "has taken a fork");
+		my_print(data, n + 1, "has taken a fork");
 		my_usleep(data->t_eat);	
-		my_print(n + 1, "is eating");
+		my_print(data, n + 1, "is eating");
 		pthread_mutex_unlock(&(data->forks[n]));
 		pthread_mutex_unlock(&(data->forks[(n + 1) % data->philo_fork]));
-		my_print(n + 1, "is sleeping");
+		my_print(data, n + 1, "is sleeping");
 		my_usleep(data->t_sleep);
-		my_print(n + 1, "is thinking");
+		my_print(data, n + 1, "is thinking");
 	}
 }
 
@@ -68,7 +68,6 @@ void	init_data(t_data *data, int ac, char **av)
 
 int main(int ac, char **av)
 {
-	ph_info	last;
 	t_data	data;
 
 	if (ac != 6 && ac != 5)
@@ -78,15 +77,15 @@ int main(int ac, char **av)
 		return (0);
 	(pthread_mutex_init(&(data.m), NULL)) &&
 			ft_error("your mutex object fail to be created :(\n", 40);
-	while (i < data.philo_fork)
-		(pthread_mutex_init(&(data.forks[i++]), NULL)) &&
+	while (data.i < data.philo_fork)
+		(pthread_mutex_init(&(data.forks[data.i++]), NULL)) &&
 			ft_error("your mutex object fail to be created :(\n", 40);
 	data.i = 0;
-	while(i < data.philo_fork)
-		(pthread_create(&(data.philos[i++]), NULL, philo_act, &data) < 0) &&
+	while(data.i < data.philo_fork)
+		(pthread_create(&(data.philos[data.i++]), NULL, philo_act, &data) < 0) &&
 			ft_error("your thread fail to be created\n", 31);
 	data.i = 0;
-	while (i < data.philo_fork)
-		pthread_join(data.phils[i++], NULL);
+	while (data.i < data.philo_fork)
+		pthread_join(data.philos[data.i++], NULL);
 }
 
