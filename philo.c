@@ -20,8 +20,11 @@ void	my_usleep(int t)
 
 void	my_print(t_data *data, unsigned long time, int n_philo, char *str)
 {
+	unsigned int t;
+
+	t = (my_get_time() - data->start);
 	pthread_mutex_lock(&(data->m));
-	printf("%ld %d %s\n", time, n_philo, str);
+	printf("%d %d %s\n", t, n_philo, str);
 	pthread_mutex_unlock(&(data->m));
 }
 
@@ -36,9 +39,15 @@ void	*philo_act(void *philo)
 {
 	t_philo	*ph;
 	int		index;
+	static int i;
 
 	ph = (t_philo *)philo;
-	index = ph->n - 1;
+	// index = ph->n - 1;
+	index = i++;
+	ph->n = i ;
+	if (index % 2)
+		usleep(500);
+	// printf("%d %d\n", index, ph->n);
 	while (1)
 	{
 		pthread_mutex_lock(&(ph->data->forks[index]));
@@ -108,6 +117,7 @@ int main(int ac, char **av)
 		ph[data.i].n = data.i + 1;
 		(pthread_create(&(ph[data.i].philo), NULL, philo_act, (void *)&ph[data.i]) < 0) &&
 			ft_error("your thread fail to be created\n", 31);
+		//usleep(100);
 	}
 	data.i = -1;
 	while (++data.i < data.philo_fork)
