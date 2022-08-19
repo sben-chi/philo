@@ -5,8 +5,8 @@ CFLAGS = -Wall -Wextra -Werror
 
 CC = gcc
 
-MANDATORY_PART = main.c ft_atoi.c
-BONUS_PART = 
+MANDATORY_PART = philo.c ft_atoi.c
+
 
 M_OFILES = ${MANDATORY_PART:.c=.o}
 B_OFILES =  ${BONUS_PART:.c=.o}
@@ -14,10 +14,9 @@ B_OFILES =  ${BONUS_PART:.c=.o}
 all: $(NAME)
 
 $(NAME): $(M_OFILES)
-	$(CC) $(M_OFILES) -o $(NAME)
+	$(CC) $(M_OFILES) -o $(NAME) -pthread
 
-bonus: $(B_OFILES)
-	$(CC) $(B_OFILES) -o $(BNAME)
+
 
 re: fclean all
 
