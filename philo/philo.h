@@ -19,6 +19,7 @@ typedef struct data
 	pthread_mutex_t	time;
 	pthread_mutex_t	last_m;
 	pthread_mutex_t	meals;
+	pthread_mutex_t	nb;
 	pthread_mutex_t	increment;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	m;

@@ -29,14 +29,19 @@ void	my_print(t_philo *ph, char *str, short b)
 		pthread_mutex_unlock(&(ph->data->m));
 }
 
-int	check_for_starvation(t_philo *ph, unsigned int last_meal)
+int	check_for_starvation(t_philo *ph)
 {
 	unsigned int t;
+	unsigned int	last_meal;
 
-	t = (my_get_time() - ph->data->start - last_meal + 10);
-	if (t > ph->data->t_die)
+	pthread_mutex_lock(&ph->data->last_m);
+	last_meal = ph->last_meal;
+	pthread_mutex_unlock(&ph->data->last_m);
+	t = (my_get_time() - ph->data->start - last_meal);
+	if (t > (ph->data->t_die)) //+ 100))
 	{
 		my_print(ph, "died 🪦", 1);
+		printf("==>%d\n", t);
 		return (0);
 	}
 	return (1);
@@ -50,7 +55,7 @@ void	take_forks(t_philo *ph, int index)
 	my_print(ph, "has taken a fork 🍴", 0);
 }
 
-void	hold_forks(t_philo *ph, int index)
+void	release_forks(t_philo *ph, int index)
 {
 	pthread_mutex_unlock(&(ph->data->forks[index]));
 	pthread_mutex_unlock(&(ph->data->forks[(index + 1) % ph->data->philo_fork]));
@@ -58,6 +63,9 @@ void	hold_forks(t_philo *ph, int index)
 
 void	eat(t_philo *ph)
 {
+	pthread_mutex_lock(&ph->data->last_m);
+	ph->last_meal = my_get_time() - ph->data->start;
+	pthread_mutex_unlock(&ph->data->last_m);
 	my_print(ph, "is eating 🍽", 0);
 	my_usleep(ph->data->t_eat);
 }
@@ -75,23 +83,21 @@ void	*philo_act(void *philo)
 	ph->n = i;
 	pthread_mutex_unlock(&ph->data->increment);
 	if (index % 2)
-		usleep(1000);
+		usleep(50);
 	nb = 0;
 	while (1)
 	{
 		take_forks(ph, index);
-		pthread_mutex_lock(&ph->data->last_m);
-		ph->last_meal = my_get_time();
-		pthread_mutex_unlock(&ph->data->last_m);
 		eat(ph);
-		hold_forks(ph, index);
-		// pthread_mutex_lock(&ph->data->meals);
-		// nb++;
-		// if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
-		// 	ph->data->i--;
-		// pthread_mutex_lock(&ph->data->meals);
+		release_forks(ph, index);
 		my_print(ph, "is sleeping 😴", 0);
 		my_usleep(ph->data->t_sleep);
+		pthread_mutex_lock(&ph->data->meals);
+		nb++;
+		if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
+			ph->data->i--;
+		// printf("philo %d eat %d and rest_m %d\n", ph->n, nb, ph->data->i);
+		pthread_mutex_unlock(&ph->data->meals);
 		my_print(ph, "is thinking 🤔", 0);
 	}
 	return (NULL);
@@ -110,6 +116,7 @@ void	init_data(t_data *data, int ac, char **av)
 		data->nb_eat = ft_atoi(av[5]);
 	else
 		data->nb_eat = -1;
+	data->i = data->philo_fork;
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->philo_fork);
 	if (!data->forks)
 		exit(1);
@@ -145,7 +152,6 @@ int main(int ac, char **av)
 	if (!ph)
 		return (1);
 	ph->last_meal = 0;
-	usleep(500);
 	gettimeofday(&time, NULL);
 	data->start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 	while(++i < data->philo_fork)
@@ -154,7 +160,6 @@ int main(int ac, char **av)
 		(pthread_create(&(ph[i].philo), NULL, philo_act, (void *)&ph[i]) < 0) &&
 			ft_error("your thread fail to be created\n", 31);
 	}
-	while (check_for_starvation(ph, ph->last_meal));
+	while (check_for_starvation(ph) && data->i);
 	return (0);
 }
-
