@@ -29,7 +29,7 @@ void	my_print(t_philo *ph, char *str, short b)
 		pthread_mutex_unlock(&(ph->data->m));
 }
 
-int	check_for_starvation(t_philo *ph)
+int	check_starvation(t_philo *ph)
 {
 	unsigned int t;
 	unsigned int	last_meal;
@@ -151,15 +151,15 @@ int main(int ac, char **av)
 	ph = malloc(sizeof(t_philo) * data->philo_fork);
 	if (!ph)
 		return (1);
-	ph->last_meal = 0;
 	gettimeofday(&time, NULL);
 	data->start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 	while(++i < data->philo_fork)
 	{
 		ph[i].data = data;
+		ph[i].last_meal = 0;
 		(pthread_create(&(ph[i].philo), NULL, philo_act, (void *)&ph[i]) < 0) &&
 			ft_error("your thread fail to be created\n", 31);
 	}
-	while (check_for_starvation(ph) && data->i);
+	while (check_starvation(ph) && data->i);
 	return (0);
 }
