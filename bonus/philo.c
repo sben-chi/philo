@@ -23,21 +23,20 @@ void	my_print(t_philo *ph, char *str, short b)
 	unsigned int	t;
 
 	t = (my_get_time() - ph->data->start);
-	// sem_wait(ph->data->msg);
+	sem_wait(ph->data->msg);
 	printf("%d %d %s\n", t, ph->n, str);
-	// if (!b)
-		// sem_post(ph->data->msg);
+	sem_post(ph->data->msg);
 }
 
 int	check_starvation(t_philo *ph)
 {
-	unsigned int t;
-	
+	unsigned int	t;
 	t = (my_get_time() - ph->data->start - ph->last_meal);
-	if (t > (ph->data->t_die)) //+ 100))
+//	printf("start %d    last_meal %d\n", ph->data->start, ph->last_meal);
+	if (t > (ph->data->t_die))
 	{
-		my_print(ph, "died 🪦", 1);
-		printf("==>%d\n", t);
+		my_print(ph, "died ", 1);
+	//	printf("==>%d\n", t);
 		return (0);
 	}
 	return (1);
@@ -47,6 +46,11 @@ void	take_forks(t_philo *ph)
 {
 	sem_wait(ph->forks);
 	my_print(ph, "has taken a fork 🍴", 0);
+	if (ph->data->philo_fork == 1)
+	{
+		my_usleep(ph->data->t_die + 1);
+		return ;
+	}
 	sem_wait(ph->forks);
 	my_print(ph, "has taken a fork 🍴", 0);
 }
@@ -66,19 +70,23 @@ void	eat(t_philo *ph)
 void	philo_act(t_philo *ph)
 {
 	int	nb;
+	pthread_t	t;
 
 	nb = 0;
-	while (check_starvation(ph))
+	//	pthread_create(&t, NULL, check_starvation, (void *)ph);
+	while (1)
 	{
 		take_forks(ph);
+		if (!check_starvation(ph))
+			exit (1);
 		ph->last_meal = my_get_time() - ph->data->start;
 		eat(ph);
 		release_forks(ph);
 		my_print(ph, "is sleeping 😴", 0);
 		my_usleep(ph->data->t_sleep);
 		nb++;
-		if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
-			sem_wait(ph->data->meals);
+	//	if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
+	//		sem_wait(ph->data->meals);
 		// printf("philo %d eat %d and rest_m %d\n", ph->n, nb, ph->data->i);
 		my_print(ph, "is thinking 🤔", 0);
 	}
@@ -90,8 +98,10 @@ void	philo_act(t_philo *ph)
 void	init_data(t_data *data, int ac, char **av)
 {
 	int	i;
-	
+
 	i = -1;
+
+	printf("%d\n", data->start);
 	data->philo_fork = ft_atoi(av[1]);
 	data->t_die = ft_atoi(av[2]);
 	data->t_eat = ft_atoi(av[3]);
@@ -133,6 +143,7 @@ int main(int ac, char **av)
 	forks = sem_open("forks", O_CREAT, 0644, data->philo_fork);
 	gettimeofday(&time, NULL);
 	data->start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+//	printf("%d\n", data->start);
 	while(++i < data->philo_fork)
 	{
 		ph[i].data = data;
@@ -144,10 +155,13 @@ int main(int ac, char **av)
 		pid = fork();
 		if (!pid)
 			philo_act(&ph[i]);
+		ph[i].philo = pid;
 	}
-	if (!data->meals->__align)
-		while(!kill(-1, SIGKILL));
-	waitpid(-1, NULL, 0);
-	while(!kill(-1, SIGKILL));
+	// create a thread to check starvation
+	// exit child if nb == nb_meals
+/*	waitpid(-1, NULL, 0);
+	i = -1;
+	while (++i < data->philo_fork)
+		kill(ph[i].philo, SIGKILL); ch*/
 	return (0);
 }
