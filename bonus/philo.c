@@ -77,8 +77,8 @@ void	philo_act(t_philo *ph)
 		my_print(ph, "is sleeping 😴", 0);
 		my_usleep(ph->data->t_sleep);
 		nb++;
-		// if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
-		// 	ph->data->i--;
+		if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
+			sem_wait(ph->data->meals);
 		// printf("philo %d eat %d and rest_m %d\n", ph->n, nb, ph->data->i);
 		my_print(ph, "is thinking 🤔", 0);
 	}
@@ -102,7 +102,7 @@ void	init_data(t_data *data, int ac, char **av)
 		data->nb_eat = -1;
 	data->i = data->philo_fork;
 	sem_unlink("meals");
-	data->meals = sem_open("meals", O_CREAT);
+	data->meals = sem_open("meals", O_CREAT, 0644, data->philo_fork);
 	sem_unlink("nb");
 	data->nb = sem_open("nb", O_CREAT);
 	sem_unlink("msg");
@@ -117,6 +117,7 @@ int main(int ac, char **av)
 	int		i;
 	int		pid;
 	sem_t	*forks;
+	int		sig;
 
 	i = -1;
 	if (ac != 6 && ac != 5)
@@ -144,6 +145,9 @@ int main(int ac, char **av)
 		if (!pid)
 			philo_act(&ph[i]);
 	}
-	wait(NULL);
+	if (!data->meals->__align)
+		while(!kill(-1, SIGKILL));
+	waitpid(-1, NULL, 0);
+	while(!kill(-1, SIGKILL));
 	return (0);
 }
