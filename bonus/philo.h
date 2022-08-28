@@ -31,7 +31,7 @@ typedef struct philo
 	unsigned int	last_meal;
 	sem_t			*forks;
 	t_data			*data;
-	pthread_t		philo;
+	pid_t		philo;
 }t_philo;
 
 int ft_atoi(const char *str);

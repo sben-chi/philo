@@ -23,6 +23,7 @@ void	my_print(t_philo *ph, char *str, short b)
 	unsigned int	t;
 
 	t = (my_get_time() - ph->data->start);
+//	printf("==>%d\n", t);
 	pthread_mutex_lock(&(ph->data->m));
 	printf("%d %d %s\n", t, ph->n, str);
 	if (!b)
@@ -41,7 +42,7 @@ int	check_starvation(t_philo *ph)
 	if (t > (ph->data->t_die)) //+ 100))
 	{
 		my_print(ph, "died 🪦", 1);
-		printf("==>%d\n", t);
+	//	printf("==>%d\n", t);
 		return (0);
 	}
 	return (1);
@@ -89,8 +90,8 @@ void	*philo_act(void *philo)
 	{
 		take_forks(ph, index);
 		eat(ph);
-		release_forks(ph, index);
 		my_print(ph, "is sleeping 😴", 0);
+		release_forks(ph, index);
 		my_usleep(ph->data->t_sleep);
 		pthread_mutex_lock(&ph->data->meals);
 		nb++;
@@ -153,6 +154,7 @@ int main(int ac, char **av)
 		return (1);
 	gettimeofday(&time, NULL);
 	data->start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
 	while(++i < data->philo_fork)
 	{
 		ph[i].data = data;
