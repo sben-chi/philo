@@ -1,10 +1,10 @@
 NAME = philo
 
-CFLAGS = -fsanitize=thread #-Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror 
 
 CC = gcc
 
-MANDATORY_PART = philo.c ft_atoi.c
+MANDATORY_PART = philo.c philo_utils.c 
 
 
 M_OFILES = ${MANDATORY_PART:.c=.o}
@@ -12,8 +12,7 @@ M_OFILES = ${MANDATORY_PART:.c=.o}
 all: $(NAME)
 
 $(NAME): $(M_OFILES)
-	$(CC) $(M_OFILES) -o $(NAME) -pthread
-
+	$(CC) $(M_OFILES) -o $(NAME) 
 re: fclean all
 
 fclean: clean
