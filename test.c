@@ -1,4 +1,4 @@
-#include "philo.h"
+#include "bonus/philo.h"
 #include <signal.h>
 
 int main()
@@ -13,10 +13,7 @@ int main()
     if (!fork())
     {
         sem_wait(t);
-        sem_wait(t);
-        exit (SIGCHLD);
     }
-    if (!waitpid(-1, NULL, 1) || data->m)   while(!kill(-1, SIGKILL));
-    printf("%d\n", sig);
+    printf("%ld\n", t->__align);
     return 0;
 }
