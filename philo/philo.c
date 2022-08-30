@@ -1,74 +1,48 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/28 10:35:45 by sben-chi          #+#    #+#             */
+/*   Updated: 2022/08/28 18:11:02 by sben-chi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
-
-unsigned int my_get_time()
-{
-	struct timeval	time;
-
-	gettimeofday(&time, NULL);
-	return (((time.tv_sec * 1000) + (time.tv_usec / 1000)));
-}
-
-void	my_usleep(unsigned int t)
-{
-	struct timeval		time;
-	unsigned int	start;
-
-	gettimeofday(&time, NULL);
-	start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-	while (my_get_time() - start < t);
-}
-
-void	my_print(t_philo *ph, char *str, short b)
-{
-	unsigned int	t;
-
-	t = (my_get_time() - ph->data->start);
-//	printf("==>%d\n", t);
-	pthread_mutex_lock(&(ph->data->m));
-	printf("%d %d %s\n", t, ph->n, str);
-	if (!b)
-		pthread_mutex_unlock(&(ph->data->m));
-}
 
 int	check_starvation(t_philo *ph)
 {
-	unsigned int t;
+	unsigned int	t;
 	unsigned int	last_meal;
 
 	pthread_mutex_lock(&ph->data->last_m);
 	last_meal = ph->last_meal;
 	pthread_mutex_unlock(&ph->data->last_m);
 	t = (my_get_time() - ph->data->start - last_meal);
-	if (t > (ph->data->t_die)) //+ 100))
+	if (t > (ph->data->t_die))
 	{
 		my_print(ph, "died 🪦", 1);
-	//	printf("==>%d\n", t);
 		return (0);
 	}
 	return (1);
 }
 
-void	take_forks(t_philo *ph, int index)
+void	do_something(t_philo *ph, int index)
 {
 	pthread_mutex_lock(&(ph->data->forks[index]));
 	my_print(ph, "has taken a fork 🍴", 0);
 	pthread_mutex_lock(&(ph->data->forks[(index + 1) % ph->data->philo_fork]));
 	my_print(ph, "has taken a fork 🍴", 0);
-}
-
-void	release_forks(t_philo *ph, int index)
-{
-	pthread_mutex_unlock(&(ph->data->forks[index]));
-	pthread_mutex_unlock(&(ph->data->forks[(index + 1) % ph->data->philo_fork]));
-}
-
-void	eat(t_philo *ph)
-{
 	pthread_mutex_lock(&ph->data->last_m);
 	ph->last_meal = my_get_time() - ph->data->start;
 	pthread_mutex_unlock(&ph->data->last_m);
 	my_print(ph, "is eating 🍽", 0);
 	my_usleep(ph->data->t_eat);
+	pthread_mutex_unlock(&(ph->data->forks[index]));
+	pthread_mutex_unlock(&(ph->data->forks[(index + 1)
+			% ph->data->philo_fork]));
 }
 
 void	*philo_act(void *philo)
@@ -88,27 +62,23 @@ void	*philo_act(void *philo)
 	nb = 0;
 	while (1)
 	{
-		take_forks(ph, index);
-		eat(ph);
-		my_print(ph, "is sleeping 😴", 0);
-		release_forks(ph, index);
-		my_usleep(ph->data->t_sleep);
+		do_something(ph, index);
 		pthread_mutex_lock(&ph->data->meals);
-		nb++;
-		if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
-			ph->data->i--;
-		// printf("philo %d eat %d and rest_m %d\n", ph->n, nb, ph->data->i);
+		if (++nb && nb == ph->data->nb_eat)
+			ph->data->ph_f--;
 		pthread_mutex_unlock(&ph->data->meals);
+		my_print(ph, "is sleeping 😴", 0);
+		my_usleep(ph->data->t_sleep);
 		my_print(ph, "is thinking 🤔", 0);
 	}
 	return (NULL);
 }
 
-void	init_data(t_data *data, int ac, char **av)
+int	init_data(t_data *data, int ac, char **av)
 {
-	int	i;
-	
-	i = -1;
+	static int	i;
+	static int	err;
+
 	data->philo_fork = ft_atoi(av[1]);
 	data->t_die = ft_atoi(av[2]);
 	data->t_eat = ft_atoi(av[3]);
@@ -117,51 +87,47 @@ void	init_data(t_data *data, int ac, char **av)
 		data->nb_eat = ft_atoi(av[5]);
 	else
 		data->nb_eat = -1;
-	data->i = data->philo_fork;
+	if ((data->philo_fork < 0) || ((int)data->t_die < 0)
+		|| ((int)data->t_eat < 0) || (int)(data->t_sleep < 0) || !data->nb_eat)
+		return (1);
+	data->ph_f = data->philo_fork;
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->philo_fork);
 	if (!data->forks)
-		exit(1);
-	(pthread_mutex_init(&(data->m), NULL)) &&
-			ft_error("your mutex object fail to be created :(\n", 40);
-	(pthread_mutex_init(&(data->meals), NULL)) &&
-			ft_error("your mutex object fail to be created :(\n", 40);
-	(pthread_mutex_init(&(data->increment), NULL)) &&
-			ft_error("your mutex object fail to be created :(\n", 40);
-	(pthread_mutex_init(&(data->last_m), NULL)) &&
-			ft_error("your mutex object fail to be created :(\n", 40);
-	while (++i < data->philo_fork)
-		(pthread_mutex_init(&(data->forks[i]), NULL)) &&
-			ft_error("your mutex object fail to be created :(\n", 40);
-	
+		return (1);
+	err += pthread_mutex_init(&(data->msg), NULL);
+	err += pthread_mutex_init(&(data->meals), NULL);
+	err += pthread_mutex_init(&(data->increment), NULL);
+	err += pthread_mutex_init(&(data->last_m), NULL);
+	while (i < data->philo_fork)
+		err += pthread_mutex_init(&(data->forks[i++]), NULL);
+	return (err && ft_error("your mutex object fail to be created :(\n", 40));
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_data	*data;
-	struct timeval time;
 	t_philo	*ph;
 	int		i;
 
 	i = -1;
 	if (ac != 6 && ac != 5)
-		return(0);
+		return (ft_error("invalid arguments\n", 18));
 	data = malloc(sizeof(t_data));
-	if (!data)
-		return (1);
-	init_data(data, ac, av);
-	ph = malloc(sizeof(t_philo) * data->philo_fork);
-	if (!ph)
-		return (1);
-	gettimeofday(&time, NULL);
-	data->start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-
-	while(++i < data->philo_fork)
+	ph = malloc(sizeof(t_philo) * ft_atoi(av[1]));
+	if (!data || !ph)
+		return (0);
+	if (init_data(data, ac, av))
+		return (0);
+	data->start = my_get_time();
+	while (++i < data->philo_fork)
 	{
 		ph[i].data = data;
 		ph[i].last_meal = 0;
 		(pthread_create(&(ph[i].philo), NULL, philo_act, (void *)&ph[i]) < 0) &&
 			ft_error("your thread fail to be created\n", 31);
 	}
-	while (check_starvation(ph) && data->i);
+	while (check_starvation(ph) && data->ph_f)
+	{
+	}
 	return (0);
 }
