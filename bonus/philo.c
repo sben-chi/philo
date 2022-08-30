@@ -85,14 +85,11 @@ void	philo_act(t_philo *ph)
 		my_print(ph, "is sleeping 😴", 0);
 		my_usleep(ph->data->t_sleep);
 		nb++;
-	//	if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
-	//		sem_wait(ph->data->meals);
+		if (ph->data->nb_eat > 0 && nb == ph->data->nb_eat)
+			exit(0);
 		// printf("philo %d eat %d and rest_m %d\n", ph->n, nb, ph->data->i);
 		my_print(ph, "is thinking 🤔", 0);
 	}
-	// printf("ph %d\n", ph->n);
-	exit(1);
-
 }
 
 void	init_data(t_data *data, int ac, char **av)
@@ -159,9 +156,15 @@ int main(int ac, char **av)
 	}
 	// create a thread to check starvation
 	// exit child if nb == nb_meals
-/*	waitpid(-1, NULL, 0);
 	i = -1;
-	while (++i < data->philo_fork)
-		kill(ph[i].philo, SIGKILL); ch*/
+	if (data->nb_eat)	
+		while (waitpid(-1, NULL, 0) > 0);
+	else
+	{
+		waitpid(-1, NULL, 0);
+		i = -1;
+		while (++i < data->philo_fork)
+			kill(ph[i].philo, SIGKILL);
+	}
 	return (0);
 }
