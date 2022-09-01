@@ -6,11 +6,11 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 14:12:54 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/08/28 17:42:45 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/01 12:16:15 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	*check_meals(void *philo)
 {
@@ -36,16 +36,20 @@ void	*check_starvation(void *philo)
 {
 	unsigned int	t;
 	t_philo			*ph;
+	unsigned	int i;
 
 	ph = (t_philo *)philo;
 	while (1)
 	{
-		t = (my_get_time() - ph->data->start - ph->last_meal);
+		i = my_get_time();
+		t = (i - ph->data->start - ph->last_meal);
 		if (t > (ph->data->t_die))
 		{
+			printf("i => %d start => %d last => %d t => %d t_die => %d\n", i, ph->data->start, ph->last_meal, t, ph->data->t_die);
 			my_print(ph, "died ");
 			exit (0);
 		}
+		usleep(10);
 	}
 	return (NULL);
 }
@@ -55,8 +59,8 @@ void	do_something(t_philo *ph)
 	sem_wait(ph->forks);
 	my_print(ph, "has taken a fork 🍴");
 	sem_wait(ph->forks);
-	my_print(ph, "has taken a fork 🍴");
 	ph->last_meal = my_get_time() - ph->data->start;
+	my_print(ph, "has taken a fork 🍴");
 	my_print(ph, "is eating 🍽");
 	my_usleep(ph->data->t_eat);
 	sem_post(ph->forks);
@@ -70,6 +74,8 @@ void	philo_act(t_philo *ph)
 
 	nb = 0;
 	pthread_create(&t, NULL, check_starvation, (void *)ph);
+	if ((ph->n - 1) % 2)
+		usleep(50);
 	while (1)
 	{
 		do_something(ph);
@@ -130,7 +136,7 @@ int	main(int ac, char **av)
 		if (!pid)
 			philo_act(&ph[i]);
 		ph[i].philo = pid;
-		usleep(50);
+		
 	}
 	if (data->nb_eat > 0)
 		pthread_create(&t, NULL, check_meals, (void *)ph);

@@ -6,11 +6,11 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 10:36:01 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/08/28 16:22:39 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/01 09:27:39 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 int	ft_error(char *str, int len)
 {
@@ -55,7 +55,7 @@ void	my_usleep(unsigned int t)
 	gettimeofday(&time, NULL);
 	start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 	while (my_get_time() - start < t)
-		usleep(50);
+		usleep(20);
 }
 
 void	my_print(t_philo *ph, char *str)
