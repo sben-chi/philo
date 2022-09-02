@@ -16,7 +16,7 @@ int	ft_error(char *str, int len)
 {
 	write(2, "Error: ", 7);
 	write(2, str, len);
-	return (-1);
+	return (1);
 }
 
 int	ft_atoi(const char *str)
@@ -27,7 +27,7 @@ int	ft_atoi(const char *str)
 	while ((*str >= 9 && *str <= 13) || *str == 32)
 		str++;
 	if (*str == '-')
-		return (ft_error("your input is < 0\n", 18));
+		return (-1);
 	str += (*str == '+');
 	while (*str >= 48 && *str <= 57)
 	{
@@ -35,7 +35,7 @@ int	ft_atoi(const char *str)
 		str++;
 	}
 	if (*str || (nb > 2147483647) || (nb < -2147483648) || !nb)
-		return (ft_error("invalid argument\n", 18));
+		return (-1);
 	return (nb);
 }
 

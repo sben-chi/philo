@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 13:38:27 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/08/28 13:40:52 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/02 14:19:33 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ int				ft_atoi(const char *str);
 int				ft_error(char *str, int len);
 unsigned int	my_get_time(void);
 void			my_print(t_philo *ph, char *str, short b);
+t_data			*init_data(int ac, char **av);
+int				init_mutex(t_data *data);
 void			my_usleep(unsigned int t);
 
 #endif

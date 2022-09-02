@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_utils.c                                      :+:      :+:    :+:   */
+/*   philo_utils_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 10:36:01 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/01 09:27:39 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/02 15:18:32 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int	ft_error(char *str, int len)
 	write(2, "Error: ", 7);
 	write(2, str, len);
 	exit (1);
-	return (1);
 }
 
 int	ft_atoi(const char *str)
@@ -27,7 +26,8 @@ int	ft_atoi(const char *str)
 	nb = 0;
 	while ((*str >= 9 && *str <= 13) || *str == 32)
 		str++;
-	(*str == '-') && (ft_error("your input is < 0\n", 18));
+	if (*str == '-') 
+		(ft_error("your input is < 0\n", 18));
 	str += (*str == '+');
 	while (*str >= 48 && *str <= 57)
 	{
