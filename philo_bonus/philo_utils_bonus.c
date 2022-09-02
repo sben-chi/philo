@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 10:36:01 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/02 15:18:32 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/02 16:11:12 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,13 @@ void	my_usleep(unsigned int t)
 		usleep(20);
 }
 
-void	my_print(t_philo *ph, char *str)
+void	my_print(t_philo *ph, char *str, short b)
 {
 	unsigned int	t;
 
 	t = (my_get_time() - ph->data->start);
 	sem_wait(ph->data->msg);
 	printf("%d %d %s\n", t, ph->n, str);
-	sem_post(ph->data->msg);
+	if (!b)
+		sem_post(ph->data->msg);
 }

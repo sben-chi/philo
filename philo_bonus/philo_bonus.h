@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 14:32:44 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/02 15:17:24 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/02 16:11:32 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int				ft_atoi(const char *str);
 int				ft_error(char *str, int len);
 unsigned int	my_get_time(void);
 void			my_usleep(unsigned int t);
-void			my_print(t_philo *ph, char *str);
+void			my_print(t_philo *ph, char *str, short b);
 t_data			*init_data(int ac, char **av);
 void			create_philos(t_philo *ph, t_data *data, sem_t *forks);
 void			philo_act(t_philo *ph);

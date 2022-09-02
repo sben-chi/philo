@@ -35,7 +35,7 @@ void	create_philos(t_philo *ph, t_data *data, sem_t *forks)
 	ph->forks = forks;
 	pid = fork();
 	if (pid < 0)
-		ft_error("\n", 1);
+		ft_error("fork function\n", 1);
 	if (!pid)
 		philo_act(ph);
 	ph->philo = pid;
