@@ -12,22 +12,13 @@
 
 #include "philo_bonus.h"
 
-void	*check_meals(void *philo)
+void	check_meals(t_data *data)
 {
-	t_philo	*ph;
 	int		n;
-	int		i;
 
-	n = 0;
-	i = -1;
-	ph = (t_philo *)philo;
-	while (n < ph->data->philo_fork)
-	{
-		sem_wait(ph->data->nb);
-		n++;
-	}
-	while (++i < ph->data->philo_fork)
-		kill(ph[i].philo, SIGKILL);
+	n = -1;
+	while (++n < data->philo_fork)
+		sem_wait(data->nb);
 	exit(0);
 }
 
@@ -76,10 +67,10 @@ void	philo_act(t_philo *ph)
 	while (1)
 	{
 		do_something(ph);
-		my_print(ph, "is sleeping 😴", 0);
-		my_usleep(ph->data->t_sleep);
 		if (ph->data->nb_eat > 0 && ++nb && nb == ph->data->nb_eat)
 			sem_post(ph->data->nb);
+		my_print(ph, "is sleeping 😴", 0);
+		my_usleep(ph->data->t_sleep);
 		my_print(ph, "is thinking 🤔", 0);
 	}
 }
@@ -89,7 +80,6 @@ int	main(int ac, char **av)
 	t_data		*data;
 	t_philo		*ph;
 	sem_t		*forks;
-	pthread_t	t;
 
 	if (ac != 6 && ac != 5)
 		return (ft_error("invalid arguments\n", 18));
@@ -104,10 +94,10 @@ int	main(int ac, char **av)
 	data->start = my_get_time();
 	while (++data->i < data->philo_fork)
 		create_philos(&ph[data->i], data, forks);
-	if (data->nb_eat > 0)
-		pthread_create(&t, NULL, check_meals, (void *)ph);
-	data->i = -1;
+	if (data->nb_eat > 0 && !fork())
+		check_meals(data);
 	waitpid(-1, NULL, 0);
+	data->i = -1;
 	while (++data->i < data->philo_fork)
 		kill(ph[data->i].philo, SIGKILL);
 	return (0);
