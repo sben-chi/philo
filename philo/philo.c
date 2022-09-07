@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 10:35:45 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/02 14:26:56 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/07 10:33:00 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	check_starvation(t_philo *ph)
 	t = (my_get_time() - ph->data->start - last_meal);
 	if (t > (ph->data->t_die))
 	{
-		my_print(ph, "died 🪦", 1);
+		my_print(ph, "died 😵", 1);
 		return (0);
 	}
 	return (1);
@@ -64,7 +64,7 @@ void	*philo_act(void *philo)
 	{
 		do_something(ph, index);
 		pthread_mutex_lock(&ph->data->meals);
-		if (++nb && nb == ph->data->nb_eat)
+		if (ph->data->nb_eat > 0 && ++nb && nb == ph->data->nb_eat)
 			ph->data->ph_f--;
 		pthread_mutex_unlock(&ph->data->meals);
 		my_print(ph, "is sleeping 😴", 0);
@@ -97,7 +97,7 @@ int	main(int ac, char **av)
 		if (pthread_create(&(ph[i].philo), NULL, philo_act, (void *)&ph[i]) < 0)
 			ft_error("your thread fail to be created\n", 31);
 	}
-	while (check_starvation(ph) && data->ph_f)
+	while (ph->data->ph_f && check_starvation(ph))
 	{
 	}
 	return (0);

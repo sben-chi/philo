@@ -12,7 +12,7 @@ M_OFILES = ${MANDATORY_PART:.c=.o}
 all: $(NAME)
 
 $(NAME): $(M_OFILES)
-	$(CC) $(M_OFILES) -o $(NAME) -pthread
+	$(CC) $(M_OFILES) -o $(NAME) -pthread -fsanitize=thread
 re: fclean all
 
 fclean: clean

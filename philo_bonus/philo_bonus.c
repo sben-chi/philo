@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 14:12:54 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/02 16:25:31 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/07 10:36:16 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ void	philo_act(t_philo *ph)
 
 	nb = 0;
 	pthread_create(&t, NULL, check_starvation, (void *)ph);
-	// if ((ph->n - 1) % 2)
-	// 	usleep(50);
+	if ((ph->n - 1) % 2)
+		usleep(50);
 	while (1)
 	{
 		do_something(ph);
