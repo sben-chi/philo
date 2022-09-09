@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 14:12:54 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/07 10:36:16 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/09 09:47:41 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,22 @@ void	*check_starvation(void *philo)
 {
 	unsigned int	t;
 	t_philo			*ph;
-	unsigned int	i;
+	unsigned int    last_meal;
 
 	ph = (t_philo *)philo;
 	while (1)
 	{
-		i = my_get_time();
-		t = (i - ph->data->start - ph->last_meal);
+	//	pthread_mutex_lock(&ph->data->last_m);
+		sem_wait(ph->data->last_m);
+		last_meal = ph->last_meal;
+		sem_post(ph->data->last_m);
+	//	pthread_mutex_unlock(&ph->data->last_m);
+		t = (my_get_time() - ph->data->start - last_meal);
 		if (t > (ph->data->t_die))
 		{
 			my_print(ph, "died ", 1);
 			exit (0);
-		}
-		usleep(10);
+		}		
 	}
 }
 
@@ -47,8 +50,12 @@ void	do_something(t_philo *ph)
 	sem_wait(ph->forks);
 	my_print(ph, "has taken a fork 🍴", 0);
 	sem_wait(ph->forks);
-	ph->last_meal = my_get_time() - ph->data->start;
 	my_print(ph, "has taken a fork 🍴", 0);
+//	pthread_mutex_lock(&ph->data->last_m);
+	sem_wait(ph->data->last_m);
+	ph->last_meal = my_get_time() - ph->data->start;
+	sem_post(ph->data->last_m);
+//	pthread_mutex_unlock(&ph->data->last_m);
 	my_print(ph, "is eating 🍽", 0);
 	my_usleep(ph->data->t_eat);
 	sem_post(ph->forks);

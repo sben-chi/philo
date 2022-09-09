@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 14:32:44 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/02 16:11:32 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/09 09:45:43 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ typedef struct data
 	unsigned int	t_die;
 	unsigned int	start;
 	int				nb_eat;
+//	pthread_mutex_t last_m;
+	sem_t			*last_m;
 	sem_t			*meals;
 	sem_t			*nb;
 	sem_t			*msg;

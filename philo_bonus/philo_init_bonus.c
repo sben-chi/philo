@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 10:36:33 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/07 10:36:40 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/09 09:45:15 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,17 @@ t_data	*init_data(int ac, char **av)
 	data->nb = sem_open("nb", O_CREAT, 0644, 0);
 	sem_unlink("msg");
 	data->msg = sem_open("msg", O_CREAT, 0644, 1);
+	sem_unlink("last_m");
+	data->last_m = sem_open("last_m", O_CREAT, 0644, 1);
+//	pthread_mutex_init(&(data->last_m), NULL);
 	return (data);
 }
 
 void	create_philos(t_philo *ph, t_data *data, sem_t *forks)
 {
 	int	pid;
-
-	ph->data = data;
+	
+		ph->data = data;
 	ph->last_meal = 0;
 	ph->n = ph->data->i + 1;
 	ph->forks = forks;

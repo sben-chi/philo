@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 13:38:27 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/02 14:19:33 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/09 09:17:44 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ typedef struct data
 	unsigned int	t_die;
 	unsigned int	start;
 	int				nb_eat;
-	pthread_mutex_t	last_m;
 	pthread_mutex_t	meals;
+	pthread_mutex_t	last_m;
 	pthread_mutex_t	increment;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	msg;
