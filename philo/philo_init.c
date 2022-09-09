@@ -23,7 +23,6 @@ int	init_mutex(t_data *data)
 	err += pthread_mutex_init(&(data->msg), NULL);
 	err += pthread_mutex_init(&(data->meals), NULL);
 	err += pthread_mutex_init(&(data->increment), NULL);
-	err += pthread_mutex_init(&(data->last_m), NULL);
 	while (i < data->philo_fork)
 		err += pthread_mutex_init(&(data->forks[i++]), NULL);
 	return (!(err && ft_error("your mutex object fail to be created :(\n", 40)));
@@ -34,7 +33,7 @@ t_data	*init_data(int ac, char **av)
 	t_data		*data;
 
 	data = malloc(sizeof(t_data));
-	if (!data)
+	if (!data || (ac != 6 && ac != 5))
 		return (NULL);
 	data->philo_fork = ft_atoi(av[1]);
 	data->t_die = ft_atoi(av[2]);

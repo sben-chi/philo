@@ -29,7 +29,6 @@ typedef struct data
 	unsigned int	start;
 	int				nb_eat;
 	pthread_mutex_t	meals;
-	pthread_mutex_t	last_m;
 	pthread_mutex_t	increment;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	msg;
@@ -39,6 +38,7 @@ typedef struct philo
 {
 	int				n;
 	unsigned int	last_meal;
+	pthread_mutex_t	last_m;
 	t_data			*data;
 	pthread_t		philo;
 }t_philo;

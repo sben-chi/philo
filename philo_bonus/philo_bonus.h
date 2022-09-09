@@ -32,8 +32,6 @@ typedef struct data
 	unsigned int	t_die;
 	unsigned int	start;
 	int				nb_eat;
-//	pthread_mutex_t last_m;
-	sem_t			*last_m;
 	sem_t			*meals;
 	sem_t			*nb;
 	sem_t			*msg;
@@ -43,6 +41,7 @@ typedef struct philo
 {
 	int				n;
 	unsigned int	last_meal;
+	sem_t			*last_m;
 	sem_t			*forks;
 	t_data			*data;
 	pid_t			philo;

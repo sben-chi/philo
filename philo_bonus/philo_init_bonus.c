@@ -12,12 +12,45 @@
 
 #include "philo_bonus.h"
 
+int	len_nbr(int n)
+{
+	int	len;
+
+	len = 1;
+	while (n)
+	{
+		n /= 10;
+		len++;
+	}
+	return (len);
+}
+
+char	*ft_itoa(int n)
+{
+	int				len;
+	char			*name;
+
+	len = len_nbr(n);
+	name = malloc(sizeof(char) * (len + 1));
+	if (!name)
+		return (NULL);
+	name[len] = '\0';
+	if (!n)
+		*name = 48;
+	while (len > 0 && n)
+	{
+		name[--len] = n % 10 + 48;
+		n /= 10;
+	}
+	return (name);
+}
+
 t_data	*init_data(int ac, char **av)
 {
 	t_data		*data;
 
 	data = malloc(sizeof(t_data));
-	if (!data)
+	if (!data || (ac != 6 && ac != 5))
 		return (NULL);
 	data->i = -1;
 	data->philo_fork = ft_atoi(av[1]);
@@ -34,24 +67,26 @@ t_data	*init_data(int ac, char **av)
 	data->nb = sem_open("nb", O_CREAT, 0644, 0);
 	sem_unlink("msg");
 	data->msg = sem_open("msg", O_CREAT, 0644, 1);
-	sem_unlink("last_m");
-	data->last_m = sem_open("last_m", O_CREAT, 0644, 1);
-//	pthread_mutex_init(&(data->last_m), NULL);
 	return (data);
 }
 
 void	create_philos(t_philo *ph, t_data *data, sem_t *forks)
 {
-	int	pid;
-	
-		ph->data = data;
+	int		pid;
+	char	*name;
+
+	ph->data = data;
 	ph->last_meal = 0;
 	ph->n = ph->data->i + 1;
 	ph->forks = forks;
+	name = ft_itoa(ph->data->i);
+	sem_unlink(name);
+	ph->last_m = sem_open(name, O_CREAT, 0644, 1);
 	pid = fork();
 	if (pid < 0)
 		ft_error("fork function\n", 1);
 	if (!pid)
 		philo_act(ph);
 	ph->philo = pid;
+	free(name);
 }

@@ -26,16 +26,14 @@ void	*check_starvation(void *philo)
 {
 	unsigned int	t;
 	t_philo			*ph;
-	unsigned int    last_meal;
+	unsigned int	last_meal;
 
 	ph = (t_philo *)philo;
 	while (1)
 	{
-	//	pthread_mutex_lock(&ph->data->last_m);
-		sem_wait(ph->data->last_m);
+		sem_wait(ph->last_m);
 		last_meal = ph->last_meal;
-		sem_post(ph->data->last_m);
-	//	pthread_mutex_unlock(&ph->data->last_m);
+		sem_post(ph->last_m);
 		t = (my_get_time() - ph->data->start - last_meal);
 		if (t > (ph->data->t_die))
 		{
@@ -51,11 +49,9 @@ void	do_something(t_philo *ph)
 	my_print(ph, "has taken a fork 🍴", 0);
 	sem_wait(ph->forks);
 	my_print(ph, "has taken a fork 🍴", 0);
-//	pthread_mutex_lock(&ph->data->last_m);
-	sem_wait(ph->data->last_m);
+	sem_wait(ph->last_m);
 	ph->last_meal = my_get_time() - ph->data->start;
-	sem_post(ph->data->last_m);
-//	pthread_mutex_unlock(&ph->data->last_m);
+	sem_post(ph->last_m);
 	my_print(ph, "is eating 🍽", 0);
 	my_usleep(ph->data->t_eat);
 	sem_post(ph->forks);
@@ -88,8 +84,6 @@ int	main(int ac, char **av)
 	t_philo		*ph;
 	sem_t		*forks;
 
-	if (ac != 6 && ac != 5)
-		return (ft_error("invalid arguments\n", 18));
 	data = init_data(ac, av);
 	if (!data)
 		return (ft_error("invalid argument\n", 18));
@@ -107,5 +101,7 @@ int	main(int ac, char **av)
 	data->i = -1;
 	while (++data->i < data->philo_fork)
 		kill(ph[data->i].philo, SIGKILL);
+	free(data);
+	free(ph);
 	return (0);
 }
