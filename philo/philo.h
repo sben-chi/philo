@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 13:38:27 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/09 09:17:44 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/11 12:17:14 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct data
 	unsigned int	start;
 	int				nb_eat;
 	pthread_mutex_t	meals;
+	pthread_mutex_t	ph_fm;
 	pthread_mutex_t	increment;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	msg;
@@ -46,7 +47,7 @@ typedef struct philo
 int				ft_atoi(const char *str);
 int				ft_error(char *str, int len);
 unsigned int	my_get_time(void);
-void			my_print(t_philo *ph, char *str, short b);
+void			my_print(int n, t_data *data, char *str, short b);
 t_data			*init_data(int ac, char **av);
 int				init_mutex(t_data *data);
 void			my_usleep(unsigned int t);

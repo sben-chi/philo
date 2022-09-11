@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 10:36:33 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/09 09:45:15 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/11 14:22:34 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,13 @@ void	create_philos(t_philo *ph, t_data *data, sem_t *forks)
 	name = ft_itoa(ph->data->i);
 	sem_unlink(name);
 	ph->last_m = sem_open(name, O_CREAT, 0644, 1);
+//	pthread_mutex_init(&(ph->last_m), NULL);
 	pid = fork();
 	if (pid < 0)
-		ft_error("fork function\n", 1);
+		ft_error("fork() error\n", 1);
 	if (!pid)
 		philo_act(ph);
 	ph->philo = pid;
 	free(name);
+	usleep(10);	
 }

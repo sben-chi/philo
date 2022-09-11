@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 09:59:23 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/09 09:22:25 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/11 12:26:30 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	init_mutex(t_data *data)
 	err += pthread_mutex_init(&(data->msg), NULL);
 	err += pthread_mutex_init(&(data->meals), NULL);
 	err += pthread_mutex_init(&(data->increment), NULL);
+	err += pthread_mutex_init(&(data->ph_fm), NULL);
 	while (i < data->philo_fork)
 		err += pthread_mutex_init(&(data->forks[i++]), NULL);
 	return (!(err && ft_error("your mutex object fail to be created :(\n", 40)));
@@ -44,7 +45,8 @@ t_data	*init_data(int ac, char **av)
 	else
 		data->nb_eat = -1;
 	if ((data->philo_fork < 0) || ((int)data->t_die < 0)
-		|| ((int)data->t_eat < 0) || (int)data->t_sleep < 0 || !data->nb_eat)
+		|| ((int)data->t_eat < 0) || (int)data->t_sleep < 0
+		|| data->nb_eat == -2)
 		return (NULL);
 	data->ph_f = data->philo_fork;
 	if (!init_mutex(data))
