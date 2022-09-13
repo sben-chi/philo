@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_utils_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: sben-chi <sben-chi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 10:36:01 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/11 13:18:19 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/13 13:47:28 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	my_usleep(unsigned int t)
 	gettimeofday(&time, NULL);
 	start = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 	while (my_get_time() - start < t)
-		usleep(20);
+		usleep(100);
 }
 
 void	my_print(t_philo *ph, char *str, short b)

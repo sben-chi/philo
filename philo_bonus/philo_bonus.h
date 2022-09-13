@@ -6,7 +6,7 @@
 /*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 14:32:44 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/11 14:22:39 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/13 13:46:37 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ typedef struct philo
 	int				n;
 	unsigned int	last_meal;
 	sem_t			*last_m;
-//	pthread_mutex_t last_m;
 	sem_t			*forks;
 	t_data			*data;
 	pid_t			philo;

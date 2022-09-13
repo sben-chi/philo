@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sben-chi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: sben-chi <sben-chi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/28 14:12:54 by sben-chi          #+#    #+#             */
-/*   Updated: 2022/09/11 14:25:39 by sben-chi         ###   ########.fr       */
+/*   Updated: 2022/09/13 13:46:26 by sben-chi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,13 @@ void	*check_starvation(void *philo)
 	t_philo			*ph;
 
 	ph = (t_philo *)philo;
-	usleep(100);
 	while (1)
 	{
-	//	pthread_mutex_lock(&ph->last_m);
 		sem_wait(ph->last_m);
 		t = (my_get_time() - ph->data->start - ph->last_meal);
-	//	printf("ph %d t %d last_meal %d\n", ph->n, t, ph->last_meal);
 		sem_post(ph->last_m);
-	//    pthread_mutex_unlock(&ph->last_m);
 		if (t > (ph->data->t_die))
 		{
-	//		printf("t %d last_meal %d\n", t, ph->last_meal);
 			my_print(ph, "died ", 1);
 			exit (0);
 		}
@@ -53,11 +48,9 @@ void	do_something(t_philo *ph)
 	sem_wait(ph->forks);
 	my_print(ph, "has taken a fork 🍴", 0);
 	my_print(ph, "is eating 🍽", 0);
-//	pthread_mutex_lock(&ph->last_m);
 	sem_wait(ph->last_m);
 	ph->last_meal = my_get_time() - ph->data->start;
 	sem_post(ph->last_m);
-//	pthread_mutex_unlock(&ph->last_m);
 	my_usleep(ph->data->t_eat);
 	sem_post(ph->forks);
 	sem_post(ph->forks);
@@ -104,8 +97,5 @@ int	main(int ac, char **av)
 	data->i = -1;
 	while (++data->i < data->philo_fork)
 		kill(ph[data->i].philo, SIGKILL);
-//	free(data);
-//	free(ph);
-//	system("leaks a.out");
 	return (0);
 }
